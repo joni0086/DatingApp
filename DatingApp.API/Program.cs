@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DatingApp.API
 {
-    // Is on video 21
+    // Is on video 28
     public class Program
     {
         public static void Main(string[] args)
