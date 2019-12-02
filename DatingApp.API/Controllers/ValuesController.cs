@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DatingApp.API.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ using Microsoft.EntityFrameworkCore;
  */
 namespace DatingApp.API.Controllers
 {
-    // GET http://localhost:5000/api/Values
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ValuesController : ControllerBase
@@ -58,6 +59,7 @@ namespace DatingApp.API.Controllers
          * Output:  IActionResult. This lets us return http responses instead of a value.
          *              then we can return things like, Ok like a http 200 response.
          */
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetValue(int id)
         {
