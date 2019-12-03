@@ -39,6 +39,7 @@ namespace DatingApp.API.Controllers
          * Output:  IActionResult. This lets us return http responses instead of values.
          *              then we can return things like, Ok like a http 200 response.
          */
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetValues()
         {
