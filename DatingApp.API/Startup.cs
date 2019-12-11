@@ -38,6 +38,7 @@ namespace DatingApp.API
             services.AddCors(); //< Adds cores middleware, used for permission like features for the front/backend.
             services.AddControllers();
             services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IDatingRepository, DatingRepository>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters 
