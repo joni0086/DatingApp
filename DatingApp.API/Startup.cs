@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Helpers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,6 +37,7 @@ namespace DatingApp.API
         {
             services.AddDbContext<DataContext>(x => x.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddCors(); //< Adds cores middleware, used for permission like features for the front/backend.
+            services.AddAutoMapper(typeof(DatingRepository).Assembly);
             services.AddControllers().AddNewtonsoftJson(opt => 
             {
                 opt.SerializerSettings.ReferenceLoopHandling =

@@ -41,6 +41,6 @@ namespace DatingApp.API.Dtos
         // URL for the users photo
         public string PhotoUrl {get; set;}
         // Collections of photos the user has
-        public ICollection<Photo> Photos { get; set; }
+        public ICollection<PhotosForDetailedDto> Photos { get; set; }
     }
 }
