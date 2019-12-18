@@ -58,22 +58,24 @@ namespace DatingApp.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> AddPhotoForUser(int userId,
-            PhotoForCreationDto photoForCreationDto)
+            [FromForm]PhotoForCreationDto photoForCreationDto)
         {
+            // Make sure the user id matches the token
             if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
                 return Unauthorized();
             }
+            // Get the user from the repo
             var userFromRepo = await _repo.GetUser(userId);
-
+            // Store information about the file
             var file = photoForCreationDto.File;
-            // Store the result from cloudinary
+            // Used to store the result from cloudinary
             var uploadResult = new ImageUploadResult();
-
             if(file.Length > 0)
             {
                 using (var stream = file.OpenReadStream())
                 {
+                    // Create the upload parameters
                     var uploadParams = new ImageUploadParams()
                     {
                         File = new FileDescription(file.Name, stream),
@@ -81,19 +83,23 @@ namespace DatingApp.API.Controllers
                         Transformation = new Transformation()
                             .Width(500).Height(500).Crop("fill").Gravity("face")
                     };
+                    // Upload the photo to cloudinary
                     uploadResult = _cloudinary.Upload(uploadParams);
                 }
             }
+            // Update the DTO
             photoForCreationDto.Url = uploadResult.Uri.ToString();
             photoForCreationDto.PublicId = uploadResult.PublicId;
-
+            // Map the DTO into a photo
             var photo = _mapper.Map<Photo>(photoForCreationDto);
-
+            // If it is the first photo, set it to main
             if (!userFromRepo.Photos.Any(u => u.IsMain))
             {
                 photo.IsMain = true;
             }
+            // Add the photo
             userFromRepo.Photos.Add(photo);
+            // Save the photo
             if (await _repo.SaveAll())
             {
                 var photoToReturn = _mapper.Map<PhotoForReturnDto>(photo);
