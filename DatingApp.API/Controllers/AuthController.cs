@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using DatingApp.API.Data;
 using DatingApp.API.Dtos;
 using DatingApp.API.Models;
@@ -20,9 +21,11 @@ namespace DatingApp.API.Controllers
         private readonly IAuthRepository _repo;
 
         private readonly IConfiguration _config;
+        private readonly IMapper _mapper;
 
-        public AuthController(IAuthRepository repo, IConfiguration config)
+        public AuthController(IAuthRepository repo, IConfiguration config, IMapper mapper)
         {
+            _mapper = mapper;
             _repo = repo;
             _config = config;
         }
@@ -39,7 +42,7 @@ namespace DatingApp.API.Controllers
                 return BadRequest("Username already exists");
             }
             // Create the user and register the user
-            var userToCreate = new User 
+            var userToCreate = new User
             {
                 Username = userForRegisterDto.Username
             };
@@ -48,7 +51,7 @@ namespace DatingApp.API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(UserForLoginDto userForLoginDto) 
+        public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
             // Make sure that we have a user and that the username/password matches what is stored
             // in the database
@@ -77,12 +80,16 @@ namespace DatingApp.API.Controllers
             };
             // Create the token handler that actually creates the token
             var tokenHandler = new JwtSecurityTokenHandler();
+            // User data we send as well
+            var user = _mapper.Map<UserForListDto>(userFromRepo);
             // Create the token
             var token = tokenHandler.CreateToken(tokenDescriptor);
             // Return the token as an object
-            return Ok(new {
-                token = tokenHandler.WriteToken(token)
-            });        
+            return Ok(new
+            {
+                token = tokenHandler.WriteToken(token),
+                user
+            });
         }
     }
 }
