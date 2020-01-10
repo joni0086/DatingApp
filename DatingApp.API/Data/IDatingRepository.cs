@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DatingApp.API.Helpers;
 using DatingApp.API.Models;
 
 namespace DatingApp.API.Data
@@ -17,8 +18,8 @@ namespace DatingApp.API.Data
         // Save all changes. Returns bool depending on success.
         Task<bool> SaveAll();
 
-        // Used to get users
-        Task<IEnumerable<User>> GetUsers();
+        // Used to get users (paged list)
+        Task<PagedList<User>> GetUsers(UserParams userParams);
 
         // Get user
         Task<User> GetUser(int id);
