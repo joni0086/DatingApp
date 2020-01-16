@@ -28,5 +28,23 @@ namespace DatingApp.API.Data
         // Used to get the current main photo
         Task<Photo> GetMainPhotoForUser(int userId);
         Task<Like> GetLike(int userId, int recipientId);
+
+        /* Used to get a single message from the database.
+         * Input:   (id): The id of the message
+         * Output:  The message
+         */
+        Task<Message> GetMessage(int id);
+        /* Used to get messages for the user
+         * Input:   (): 
+         * Output:  The messages
+         */
+        Task<PagedList<Message>> GetMessagesForUser();
+        /* The conversation between two users. Should be displayed on tabbed panel.
+         * Input:   (userId): The id of the user
+         *          (recipientId): The id of the recipient
+         * Output:  The messages
+         */
+        Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId);
+
     }
 }

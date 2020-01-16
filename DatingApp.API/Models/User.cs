@@ -38,6 +38,9 @@ namespace DatingApp.API.Models
         // Used for like functionality
         public ICollection<Like> Likers { get; set; }
         public ICollection<Like> Likees { get; set; }
+        // Used for messaging
+        public ICollection<Message> MessagesSent { get; set; }
+        public ICollection<Message> MessagesReceived { get; set; }
 
     }
 }
