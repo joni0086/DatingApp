@@ -35,10 +35,10 @@ namespace DatingApp.API.Data
          */
         Task<Message> GetMessage(int id);
         /* Used to get messages for the user
-         * Input:   (): 
+         * Input:   (messageParams): 
          * Output:  The messages
          */
-        Task<PagedList<Message>> GetMessagesForUser();
+        Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams);
         /* The conversation between two users. Should be displayed on tabbed panel.
          * Input:   (userId): The id of the user
          *          (recipientId): The id of the recipient
