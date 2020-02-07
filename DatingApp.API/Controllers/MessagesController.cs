@@ -79,8 +79,10 @@ namespace DatingApp.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMessage(int userId, MessageForCreationDto messageForCreationDto)
         {
+            var sender = await _repo.GetUser(userId);
+
             // Make sure that the correct token is used and matches the user
-            if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            if(sender.Id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
             {
                 return Unauthorized();
             }
@@ -98,10 +100,9 @@ namespace DatingApp.API.Controllers
             // Below not async, since not querying database etc at this time
             _repo.Add(message);
 
-            var messageToReturn = _mapper.Map<MessageForCreationDto>(message);
-
             if (await _repo.SaveAll())
             {
+                var messageToReturn = _mapper.Map<MessageToReturnDto>(message);
                 //var messageToReturn = _mapper.Map<MessageToReturnDto>(message);
                 return CreatedAtRoute("GetMessage",
                     new {userId, id = message.Id}, messageToReturn);
@@ -109,5 +110,57 @@ namespace DatingApp.API.Controllers
             throw new Exception("Creating the message failed on save");
         }
 
+        [HttpPost("{id}")]
+        public async Task<IActionResult> DeleteMessage(int id, int userId) 
+        {
+            // Make sure that the correct token is used and matches the user
+            if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+            var messageFromRepo = await _repo.GetMessage(id);
+            if (messageFromRepo.SenderId == userId) 
+            {
+                messageFromRepo.SenderDeleted = true;
+            }
+            if (messageFromRepo.RecipientId == userId) 
+            {
+                messageFromRepo.RecipientDeleted = true;
+            }
+
+            if (messageFromRepo.SenderDeleted && messageFromRepo.RecipientDeleted)
+            {
+                _repo.Delete(messageFromRepo);
+            }
+
+            if (await _repo.SaveAll())
+            {
+                return NoContent();
+            }
+
+            throw new Exception("Error deleting the message");
+        }
+
+        [HttpPost("{id}/read")]
+        public async Task<IActionResult> MarkMessageAsRead(int userId, int id)
+        {
+            // Make sure that the correct token is used and matches the user
+            if(userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+            {
+                return Unauthorized();
+            }
+            var message = await _repo.GetMessage(id);
+            
+            if(message.RecipientId != userId)
+            {
+                return Unauthorized();
+            }
+
+            message.IsRead = true;
+            message.DateRead = DateTime.Now;
+            await _repo.SaveAll();
+            
+            return NoContent();
+        }
     }
 }
