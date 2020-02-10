@@ -17,7 +17,7 @@ namespace DatingApp.API.Models
         // Used for cloudinary
         public string PublicId { get; set; }
         // Relation variables between the photo and the user
-        public User User { get; set; }
+        public virtual User User { get; set; }
         public int UserId { get; set; }
     }
 }
